@@ -151,9 +151,19 @@ def game_repository():
 
 
 def _get_or_create_game(game_id):
+
     game = DatabaseGateway.get_instance().load_game(game_id)
+
     if game is None:
         game = _create_game(game_id)
+
+    elif game.board.maze.size != 13:
+        new_board = factory.create_board(maze_size=13)
+        game.restart(new_board)
+
+        DatabaseGateway.get_instance().update_game(game_id, game)
+        DatabaseGateway.get_instance().commit()
+
     return game
 
 
