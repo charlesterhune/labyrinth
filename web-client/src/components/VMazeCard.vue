@@ -21,6 +21,7 @@
                 width="100"
                 class="maze-card__wall maze-card__outline"
             ></rect>
+
             <rect
                 :x="remainingSpace"
                 :y="remainingSpace"
@@ -28,6 +29,7 @@
                 :width="pathWidth"
                 class="maze-card__pathway"
             ></rect>
+
             <rect
                 ref="north"
                 v-if="hasNorth"
@@ -37,6 +39,7 @@
                 :width="pathWidth"
                 class="maze-card__pathway"
             ></rect>
+
             <rect
                 ref="east"
                 v-if="hasEast"
@@ -46,6 +49,7 @@
                 :width="remainingSpace + 1"
                 class="maze-card__pathway"
             ></rect>
+
             <rect
                 ref="south"
                 v-if="hasSouth"
@@ -55,6 +59,7 @@
                 :width="pathWidth"
                 class="maze-card__pathway"
             ></rect>
+
             <rect
                 ref="west"
                 v-if="hasWest"
@@ -65,7 +70,13 @@
                 class="maze-card__pathway"
             ></rect>
         </g>
-        <player-piece-group :players="players" :mid-point="50" :max-size="piecesSize" />
+
+        <player-piece-group
+            :players="players"
+            :mid-point="50"
+            :max-size="piecesSize"
+        />
+
         <v-objective v-if="hasObjective"></v-objective>
     </svg>
 </template>
@@ -81,63 +92,76 @@ import { useGameStore } from "@/stores/game.js";
 
 export default {
     name: "v-maze-card",
+
     components: {
-        /* eslint-disable vue/no-unused-components */
         PlayerPieceGroup,
         VObjective,
     },
+
     props: {
         mazeCard: {
             type: Object,
             required: true,
         },
+
         xPos: {
             type: Number,
             required: false,
             default: 0,
         },
+
         yPos: {
             type: Number,
             required: false,
             default: 0,
         },
+
         interaction: {
             type: Boolean,
             required: false,
             default: false,
         },
+
         shiftInteraction: {
             type: Boolean,
             required: false,
             default: false,
         },
+
         reachableByPlayer: {
             required: false,
             default: null,
         },
     },
+
     data() {
         return {
             animatedRotationClass: "",
             timer: 0,
             xPosAnimated: 0,
             yPosAnimated: 0,
+
             pathWidth: 37,
             piecesSize: 33,
+
             positionAnimationThreshold: 40,
             xAnimation: null,
             yAnimation: null,
         };
     },
+
     watch: {
-        rotation: function (newValue) {
+        rotation(newValue) {
             clearTimeout(this.timer);
+
             this.animatedRotationClass = "rotateTo" + newValue;
+
             this.timer = setTimeout(() => {
                 this.animatedRotationClass = "rotate" + newValue;
             }, 500);
         },
-        xPos: function (newValue, oldValue) {
+
+        xPos(newValue, oldValue) {
             if (Math.abs(newValue - oldValue) > this.positionAnimationThreshold) {
                 this.xAnimation = gsap.to(this.$data, {
                     xPosAnimated: newValue,
@@ -148,11 +172,13 @@ export default {
                 if (this.xAnimation) {
                     this.xAnimation.progress(1);
                 }
+
                 this.xPosAnimated = newValue;
                 this.xAnimation = null;
             }
         },
-        yPos: function (newValue, oldValue) {
+
+        yPos(newValue, oldValue) {
             if (Math.abs(newValue - oldValue) > this.positionAnimationThreshold) {
                 this.yAnimation = gsap.to(this.$data, {
                     yPosAnimated: newValue,
@@ -163,59 +189,74 @@ export default {
                 if (this.yAnimation) {
                     this.yAnimation.progress(1);
                 }
+
                 this.yPosAnimated = newValue;
                 this.yAnimation = null;
             }
         },
     },
+
     computed: {
-        rotation: function () {
+        rotation() {
             return this.mazeCard.rotation;
         },
-        rotationClass: function () {
+
+        rotationClass() {
             if (this.animatedRotationClass === "") {
                 return "rotate" + this.mazeCard.rotation;
             }
+
             return this.animatedRotationClass;
         },
-        reachablePlayerColorIndexClass: function () {
+
+        reachablePlayerColorIndexClass() {
             if (this.reachableByPlayer !== null) {
                 return "maze-card--reachable-player-" + this.reachableByPlayer;
             }
+
             return "";
         },
-        remainingSpace: function () {
+
+        remainingSpace() {
             return Math.floor((this.$ui.cardSize - this.pathWidth) / 2);
         },
-        hasNorth: function () {
+
+        hasNorth() {
             return this.hasOutPath(this.mazeCard, "N");
         },
-        hasEast: function () {
+
+        hasEast() {
             return this.hasOutPath(this.mazeCard, "E");
         },
-        hasSouth: function () {
+
+        hasSouth() {
             return this.hasOutPath(this.mazeCard, "S");
         },
-        hasWest: function () {
+
+        hasWest() {
             return this.hasOutPath(this.mazeCard, "W");
         },
+
         ...mapState(usePlayersStore, {
             players(store) {
                 return store.findByMazeCard(this.mazeCard.id);
             },
         }),
+
         ...mapState(useGameStore, {
             hasObjective(store) {
                 return store.objectiveId === this.mazeCard.id;
             },
         }),
     },
+
     methods: {
         hasOutPath(mazeCard, outPath) {
-            return mazeCard.outPaths.indexOf(outPath) != -1;
+            return mazeCard.outPaths.indexOf(outPath) !== -1;
         },
     },
-    created: function () {
+
+    created() {
         this.xPosAnimated = this.xPos;
         this.yPosAnimated = this.yPos;
     },
@@ -225,24 +266,32 @@ export default {
 <style lang="scss">
 .maze-card {
     &__outline {
-        stroke: $color-outline-noninteractive;
+        stroke: #4c2d72;
         stroke-width: 1px;
-        stroke-opacity: 0.8;
+        stroke-opacity: 0.9;
     }
 
     &__wall {
-        fill: #111111;
-        opacity: 0.9;
+        fill: #171022;
+        opacity: 0.96;
+    }
+
+    &__pathway {
+    fill: #9149D6;
+    stroke: #9149D6;
+}
+
+    &__group {
+        transform-origin: 50px 50px;
     }
 
     &--interactive {
         cursor: pointer;
 
         .maze-card__outline {
-            stroke: $color-outline-interactive;
+            stroke: #b991e3;
             stroke-width: 3px;
             stroke-opacity: 1;
-            stroke: $interaction-color;
             animation: maze-card__outline--pulse 3s infinite;
         }
 
@@ -252,7 +301,7 @@ export default {
 
         &:hover {
             .maze-card__wall {
-                fill: $interaction-color;
+                fill: #2d1a42;
             }
         }
     }
@@ -265,23 +314,14 @@ export default {
         }
 
         .maze-card__outline {
-            stroke: $color-outline-interactive;
+            stroke: #b991e3;
             stroke-width: 3px;
-            stroke-opacity: 0.8;
+            stroke-opacity: 0.9;
         }
 
         .maze-card__wall {
             opacity: 1;
         }
-    }
-
-    &__pathway {
-        fill: $color-pathways;
-        stroke: $color-pathways;
-    }
-
-    &__group {
-        transform-origin: 50px 50px;
     }
 
     &--reachable-player-0 {
@@ -314,11 +354,14 @@ export default {
 }
 
 $degrees: 0 90 180 270;
+
 @each $rotation in $degrees {
     $to: $rotation;
+
     @if $rotation == 0 {
         $to: 360;
     }
+
     $from: $to - 90;
     $animationName: from#{$from}to#{$to};
 
@@ -333,25 +376,19 @@ $degrees: 0 90 180 270;
     @include rotateFromTo($animationName, $from + deg, $to + deg);
 }
 
-$color1: $color-outline-interactive;
-$color2: $interaction-color;
 @keyframes maze-card__outline--pulse {
     0% {
-        stroke: $color1;
+        stroke: #b991e3;
         stroke-width: 3px;
     }
-    40% {
-        stroke: $color1;
-    }
+
     50% {
-        stroke: $color2;
+        stroke: #ffffff;
         stroke-width: 2px;
     }
-    60% {
-        stroke: $color1;
-    }
+
     100% {
-        stroke: $color1;
+        stroke: #b991e3;
         stroke-width: 3px;
     }
 }
