@@ -231,7 +231,7 @@ export default {
     }
 
     &__wall {
-        fill: $color-walls;
+        fill: #111111;
         opacity: 0.9;
     }
 
