@@ -1,8 +1,45 @@
-FROM docker:27-cli
+FROM python:3.12
 
-RUN apk add --no-cache docker-cli-compose
+RUN apt-get update && apt-get install -y \
+    nginx \
+    nodejs \
+    npm \
+    gcc \
+    g++ \
+    cmake \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+
 COPY . .
 
-CMD ["docker", "compose", "up"] 
+# Build frontend
+WORKDIR /app/web-client
+RUN npm ci
+RUN npm run build
+
+# Install backend
+WORKDIR /app
+RUN pip install --no-cache-dir uwsgi
+RUN pip install --no-cache-dir -r backend/requirements.txt
+
+# Build solver libraries
+WORKDIR /app/algolibs
+RUN mkdir -p build
+RUN cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE -DBUILD_TESTS=OFF -DBUILD_BENCHMARKS=OFF
+RUN cmake --build build
+
+# Prepare backend
+WORKDIR /app
+RUN rm -rf backend/instance/lib
+RUN mkdir -p backend/instance/lib
+RUN cp algolibs/build/solvers/*.so backend/instance/lib/
+RUN python backend/instance/create_secret.py >> backend/instance/config.py
+
+# Copy frontend build
+RUN rm -rf /usr/share/nginx/html/*
+RUN cp -r web-client/dist/* /usr/share/nginx/html/
+
+EXPOSE 10000
+
+CMD sh -c "cd /app/backend && uwsgi --http 127.0.0.1:9113 --wsgi-file labyrinth_main.py --callable app & nginx -g 'daemon off;'"
