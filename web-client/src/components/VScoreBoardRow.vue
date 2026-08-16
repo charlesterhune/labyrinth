@@ -96,9 +96,10 @@ export default {
     }
 
     &__player-name {
-        --text-height: calc(var(--score-row-height) - 0.2rem);
-
-        width: 8rem;
+    --text-height: calc(var(--score-row-height) - 0.2rem);
+    flex: 1;
+    width: auto;
+    min-width: 0;
         height: var(--text-height);
 
         flex: 0 0 8rem;
