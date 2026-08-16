@@ -41,6 +41,10 @@ def create_bot(player_id, compute_method, full_path=None,
     :raises InvalidComputeMethodException: if compute_method cannot identify an existing library.
     """
     library_binding_factory = _create_library_binding_factory(expected_library=compute_method, full_path=full_path)
+
+    if compute_method.lower() == "minimax":
+        kwargs["player_name"] = "Neon Byte (2P) - 8 4 1 10 6 6 11 7"
+
     return Bot(library_binding_factory, url_supplier=url_supplier,
                shift_url=shift_url, move_url=move_url,
                identifier=player_id, **kwargs)
