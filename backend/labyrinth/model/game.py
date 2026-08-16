@@ -153,7 +153,7 @@ class Maze:
     The state is maintained in a 2-d array of MazeCard instances.
     """
 
-    def __init__(self, maze_size=13):
+    def __init__(self, maze_size=7):
         self._maze_size = maze_size
         self._maze_locations = [BoardLocation(row, column) for row in range(maze_size) for column in range(maze_size)]
         self._maze_cards = [[None for _ in range(maze_size)] for _ in range(maze_size)]
