@@ -1,10 +1,24 @@
 <template>
-    <v-editable-field
-        v-if="isEditable"
-        v-model="playerName"
-        :placeholder="editablePlaceholder"
-    />
-    <p v-else>{{ playerLabel }}</p>
+    <div class="player-name-panel">
+
+        <img
+            v-if="isUserPlayer && profilePic"
+            :src="profilePic"
+            class="player-name-panel__avatar"
+            alt=""
+        />
+
+        <v-editable-field
+            v-if="isEditable"
+            v-model="playerName"
+            :placeholder="editablePlaceholder"
+        />
+
+        <p v-else>
+            {{ playerLabel }}
+        </p>
+
+    </div>
 </template>
 
 <script>
@@ -24,6 +38,7 @@ export default {
     data() {
         return {
             editablePlaceholder: "Player",
+            profilePic: "",
         };
     },
 
@@ -35,6 +50,10 @@ export default {
 
     computed: {
         isEditable() {
+            return this.player.isUser;
+        },
+
+        isUserPlayer() {
             return this.player.isUser;
         },
 
@@ -54,12 +73,18 @@ export default {
     },
 
     methods: {
-        ...mapActions(usePlayersStore, ["changeUserPlayerName"]),
+        ...mapActions(
+            usePlayersStore,
+            ["changeUserPlayerName"]
+        ),
 
-        receiveWixPlayerName(event) {
+        receiveWixPlayerInfo(event) {
             const data = event.data;
 
-            if (!data || data.type !== "SET_PLAYER_NAME") {
+            if (
+                !data ||
+                data.type !== "SET_PLAYER_INFO"
+            ) {
                 return;
             }
 
@@ -67,30 +92,59 @@ export default {
                 return;
             }
 
-            if (!data.playerName) {
-                return;
+            if (data.playerName) {
+                const cleanName =
+                    String(data.playerName).trim();
+
+                if (cleanName) {
+                    this.changeUserPlayerName(
+                        cleanName
+                    );
+                }
             }
 
-            const cleanName = String(data.playerName).trim();
-
-            if (!cleanName) {
-                return;
+            if (data.profilePic) {
+                this.profilePic =
+                    String(data.profilePic);
             }
 
-            console.log("Wix player name received:", cleanName);
-
-            this.changeUserPlayerName(cleanName);
+            console.log(
+                "Wix player info received:",
+                data.playerName,
+                data.profilePic
+            );
         },
     },
 
     mounted() {
-        window.addEventListener("message", this.receiveWixPlayerName);
+        window.addEventListener(
+            "message",
+            this.receiveWixPlayerInfo
+        );
     },
 
     beforeUnmount() {
-        window.removeEventListener("message", this.receiveWixPlayerName);
+        window.removeEventListener(
+            "message",
+            this.receiveWixPlayerInfo
+        );
     },
 };
 </script>
 
-<style></style>
+<style scoped>
+.player-name-panel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.player-name-panel__avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid #9149D6;
+}
+</style>
