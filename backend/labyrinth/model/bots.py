@@ -27,23 +27,26 @@ from .game import Player, Turns, PlayerAction
 
 def create_bot(player_id, compute_method, full_path=None,
                url_supplier=None, shift_url=None, move_url=None, **kwargs):
-    """ This is a factory method creating a Bot.
+    """ This is a factory method creating a Bot. """
 
-    :param player_id: the identifier of the player to create.
-    :param compute_method: is used to determine the action computation method and its parameters.
-        It is expected to denote the filename of a shared library.
-    :param url_supplier: a supplier for the shift and move API URLs.
-        This supplier is expected to have methods get_shift_url(game_id, player_id), and
-        get_move_url(game_id, player_id).
-    :param shift_url: use this instead of url_supplier, if you already know the final url to call for a shift.
-    :param move_url: use this instead of url_supplier, if you already know the final url to call for a move.
-    :param kwargs: is passed to the Player constructor
-    :raises InvalidComputeMethodException: if compute_method cannot identify an existing library.
-    """
-    library_binding_factory = _create_library_binding_factory(expected_library=compute_method, full_path=full_path)
-    return Bot(library_binding_factory, url_supplier=url_supplier,
-               shift_url=shift_url, move_url=move_url,
-               identifier=player_id, **kwargs)
+    library_binding_factory = _create_library_binding_factory(
+        expected_library=compute_method,
+        full_path=full_path
+    )
+
+    # Only rename the Minimax bot.
+    # Leave every other bot name/function alone.
+    if compute_method.lower() == "minimax":
+        kwargs["player_name"] = "Neon Byte (2P) +8-4+1+10+6-6+11-7"
+
+    return Bot(
+        library_binding_factory,
+        url_supplier=url_supplier,
+        shift_url=shift_url,
+        move_url=move_url,
+        identifier=player_id,
+        **kwargs
+    )
 
 
 def get_available_computation_methods():
