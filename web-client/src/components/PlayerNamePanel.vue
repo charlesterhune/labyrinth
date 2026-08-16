@@ -127,11 +127,22 @@ export default {
     },
 
     mounted() {
-        window.addEventListener(
-            "message",
-            this.receiveWixPlayerInfo
+    window.addEventListener(
+        "message",
+        this.receiveWixPlayerInfo
+    );
+
+    // The player row now exists and is ready to receive Wix identity.
+    // Ask Wix to resend the player name/profile picture.
+    if (this.player.isUser) {
+        window.parent.postMessage(
+            {
+                type: "LABYRINTH_READY"
+            },
+            "*"
         );
-    },
+    }
+},
 
     beforeUnmount() {
         window.removeEventListener(
