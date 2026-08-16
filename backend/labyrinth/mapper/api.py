@@ -10,7 +10,7 @@ import labyrinth.model.bots
 from labyrinth.mapper.shared import _objective_to_dto, _dto_to_board_location, _board_location_to_dto, _board_to_dto
 from labyrinth.mapper.constants import (ID, OBJECTIVE, PLAYERS, MAZE, NEXT_ACTION, ENABLED_SHIFT_LOCATIONS, LOCATION,
                                         MAZE_CARD_ID, LEFTOVER_ROTATION, KEY, MESSAGE, ACTION, PLAYER_ID,
-                                        MAZE_SIZE, SCORE, PIECE_INDEX, IS_BOT, COMPUTATION_METHOD, PLAYER_NAME)
+                                        MAZE_SIZE, SCORE, PIECE_INDEX, IS_BOT, COMPUTATION_METHOD, PLAYER_NAME, PROFILE_PIC)
 
 
 def game_state_to_dto(game: Game, remaining: timedelta):
@@ -88,6 +88,12 @@ def dto_to_player_name(player_name_dto):
     return None
 
 
+def dto_to_profile_pic(player_dto):
+    if isinstance(player_dto, dict):
+        return _value_or_none(player_dto, PROFILE_PIC)
+    return None
+
+
 def _value_or_none(dto, key):
     if key in dto:
         return dto[key]
@@ -128,6 +134,8 @@ def player_to_dto(player: Player):
                   PIECE_INDEX: player.piece.piece_index}
     if player.player_name:
         player_dto[PLAYER_NAME] = player.player_name
+    if getattr(player, "profile_pic", None):
+        player_dto[PROFILE_PIC] = player.profile_pic
     if type(player) is labyrinth.model.bots.Bot:
         player_dto[IS_BOT] = True
         player_dto[COMPUTATION_METHOD] = player.compute_method_factory.SHORT_NAME

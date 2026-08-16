@@ -34,7 +34,7 @@ class MazeCardFactory:
         return self.create_instance(out_paths, rotation)
 
 
-def create_maze_and_leftover(size=7):
+def create_maze_and_leftover(size=13):
     """ Generates a random maze state with a given odd size.
     The layout rules of the original game are obeyed, with a few generalizations for sizes > 7.
     Corners of the maze are fixed as corners.
@@ -133,7 +133,7 @@ def _even(number):
     return number % 2 == 0
 
 
-def create_board(maze_size=7):
+def create_board(maze_size=13):
     """ Creates a board with a given maze size.
 
     The maze and the leftover obey the generalized original-game layout and maze card distribution rules """
@@ -141,7 +141,7 @@ def create_board(maze_size=7):
     return Board(maze=maze, leftover_card=leftover)
 
 
-def create_game(maze_size=7, game_id=0, with_delay=True):
+def create_game(maze_size=13, game_id=0, with_delay=True):
     """ Creates a game instance with a random board. Player and piece initialization
     is not done here. """
     if not with_delay:

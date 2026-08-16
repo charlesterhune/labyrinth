@@ -32,10 +32,11 @@ def add_player(game_id, player_request_dto):
     game = _get_or_create_game(game_id)
     is_bot, computation_method = mapper.dto_to_type(player_request_dto)
     player_name = mapper.dto_to_player_name(player_request_dto)
+    profile_pic = mapper.dto_to_profile_pic(player_request_dto)
     player_id = _try(game.unused_player_id)
     player = None
     if not is_bot:
-        player = Player(player_id, player_name=player_name)
+        player = Player(player_id, player_name=player_name, profile_pic=profile_pic)
     else:
         player = _try(lambda: bots.create_bot(compute_method=computation_method,
                                               url_supplier=URLSupplier(), player_id=player_id,

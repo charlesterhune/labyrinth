@@ -115,7 +115,7 @@ export default {
      * The Wix player name is now sent to the backend
      * when the multiplayer player is created.
      */
-    doAddPlayer(playerName, callback) {
+    doAddPlayer(playerName, profilePic, callback) {
         const addPlayerPath =
             API_PATH + "/games/0/players";
 
@@ -126,10 +126,16 @@ export default {
                 ? playerName.trim()
                 : "";
 
+        const cleanProfilePic = typeof profilePic === "string" ? profilePic.trim() : "";
+
         const playerData = {};
 
         if (cleanName) {
             playerData.name = cleanName;
+        }
+
+        if (cleanProfilePic) {
+            playerData.profilePic = cleanProfilePic;
         }
 
         console.log(

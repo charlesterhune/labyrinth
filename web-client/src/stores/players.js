@@ -137,6 +137,7 @@ export const usePlayersStore = defineStore("players", {
             if (gameStore.isOnline) {
                 API.doAddPlayer(
                     this.userPlayerName,
+                    this.userProfilePic,
                     (apiPlayer) => {
                         apiPlayer.isUser = true;
 
@@ -213,6 +214,7 @@ export const usePlayersStore = defineStore("players", {
 
             if (gameStore.isOnline) {
                 API.doAddPlayer(
+                    "",
                     "",
                     (apiPlayer) => {
                         apiPlayer.isWasm = true;

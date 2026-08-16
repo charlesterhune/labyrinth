@@ -2,7 +2,7 @@
     <div class="player-name-panel">
         <div class="player-name-panel__avatar-slot">
             <img
-                v-if="isUserPlayer && profilePic"
+                v-if="profilePic"
                 :src="profilePic"
                 class="player-name-panel__avatar"
                 alt=""
