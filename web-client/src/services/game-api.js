@@ -11,7 +11,7 @@ export default {
     errorHandler: () => {},
     _isPolling: false,
 
-    // this will not start polling until the next request has finished.
+    // This will not start polling until the next request has finished.
     activatePolling() {
         this._isPolling = true;
     },
@@ -24,6 +24,7 @@ export default {
     resumePolling() {
         if (this._isPolling) {
             this._suspendPolling();
+
             if (pollingTimer === 0) {
                 this._poll();
             }
@@ -40,7 +41,11 @@ export default {
 
     _poll() {
         this.fetchState();
-        pollingTimer = setTimeout(() => this._poll(), POLL_INTERVAL_MS);
+
+        pollingTimer = setTimeout(
+            () => this._poll(),
+            POLL_INTERVAL_MS
+        );
     },
 
     _handleError(error) {
@@ -55,108 +60,228 @@ export default {
     },
 
     doMove(playerId, toLocation) {
-        const postMovePath = API_PATH + "/games/0/move?p_id=" + playerId;
+        const postMovePath =
+            API_PATH +
+            "/games/0/move?p_id=" +
+            playerId;
+
         this._suspendPolling();
+
         axios
             .post(postMovePath, {
                 location: toLocation,
             })
-            .catch((error) => this._handleError(error))
-            .then(() => this.resumePolling());
+            .catch((error) =>
+                this._handleError(error)
+            )
+            .then(() =>
+                this.resumePolling()
+            );
     },
 
-    doShift(playerId, shiftLocation, leftoverRotation, callback) {
-        const postShiftPath = API_PATH + "/games/0/shift?p_id=" + playerId;
+    doShift(
+        playerId,
+        shiftLocation,
+        leftoverRotation,
+        callback
+    ) {
+        const postShiftPath =
+            API_PATH +
+            "/games/0/shift?p_id=" +
+            playerId;
+
         this._suspendPolling();
+
         axios
             .post(postShiftPath, {
                 location: shiftLocation,
                 leftoverRotation: leftoverRotation,
             })
-            .then((apiResponse) => callback(apiResponse.data))
-            .catch((error) => this._handleError(error))
-            .then(() => this.resumePolling());
+            .then((apiResponse) =>
+                callback(apiResponse.data)
+            )
+            .catch((error) =>
+                this._handleError(error)
+            )
+            .then(() =>
+                this.resumePolling()
+            );
     },
 
-    doAddPlayer(callback) {
-        const addPlayerPath = API_PATH + "/games/0/players";
+    /*
+     * ADD HUMAN PLAYER
+     *
+     * IMPORTANT:
+     * The Wix player name is now sent to the backend
+     * when the multiplayer player is created.
+     */
+    doAddPlayer(playerName, callback) {
+        const addPlayerPath =
+            API_PATH + "/games/0/players";
+
         this._suspendPolling();
+
+        const cleanName =
+            typeof playerName === "string"
+                ? playerName.trim()
+                : "";
+
+        const playerData = {};
+
+        if (cleanName) {
+            playerData.name = cleanName;
+        }
+
+        console.log(
+            "Creating multiplayer player with name:",
+            cleanName
+        );
+
         axios
-            .post(addPlayerPath)
-            .then((apiResponse) => callback(apiResponse.data))
-            .catch((error) => this._handleError(error))
-            .then(() => this.resumePolling());
+            .post(
+                addPlayerPath,
+                playerData
+            )
+            .then((apiResponse) =>
+                callback(apiResponse.data)
+            )
+            .catch((error) =>
+                this._handleError(error)
+            )
+            .then(() =>
+                this.resumePolling()
+            );
     },
 
     doAddBot(computeMethod) {
-        const addPlayerPath = API_PATH + "/games/0/players";
+        const addPlayerPath =
+            API_PATH + "/games/0/players";
+
         this._suspendPolling();
+
         axios
             .post(addPlayerPath, {
                 isBot: true,
                 computationMethod: computeMethod,
             })
-            .catch((error) => this._handleError(error))
-            .then(() => this.resumePolling());
+            .catch((error) =>
+                this._handleError(error)
+            )
+            .then(() =>
+                this.resumePolling()
+            );
     },
 
     removePlayer(playerId) {
-        const deletePlayerPath = API_PATH + "/games/0/players/" + playerId;
+        const deletePlayerPath =
+            API_PATH +
+            "/games/0/players/" +
+            playerId;
+
         this._suspendPolling();
+
         axios
             .delete(deletePlayerPath)
-            .catch((error) => this._handleError(error))
-            .then(() => this.resumePolling());
+            .catch((error) =>
+                this._handleError(error)
+            )
+            .then(() =>
+                this.resumePolling()
+            );
     },
 
     changePlayerName(playerId, name) {
-        const changePlayerNamePath = API_PATH + "/games/0/players/" + playerId + "/name";
+        const changePlayerNamePath =
+            API_PATH +
+            "/games/0/players/" +
+            playerId +
+            "/name";
+
         this._suspendPolling();
+
         axios
             .put(changePlayerNamePath, {
                 name: name,
             })
-            .catch((error) => this._handleError(error))
-            .then(() => this.resumePolling());
+            .catch((error) =>
+                this._handleError(error)
+            )
+            .then(() =>
+                this.resumePolling()
+            );
     },
 
     changeGame(size) {
-        const putGamePath = API_PATH + "/games/0";
+        const putGamePath =
+            API_PATH + "/games/0";
+
         this._suspendPolling();
+
         axios
             .put(putGamePath, {
                 mazeSize: size,
             })
-            .catch((error) => this._handleError(error))
-            .then(() => this.resumePolling());
+            .catch((error) =>
+                this._handleError(error)
+            )
+            .then(() =>
+                this.resumePolling()
+            );
     },
 
     fetchState() {
-        var getStatePath = API_PATH + "/games/0/state";
+        const getStatePath =
+            API_PATH + "/games/0/state";
+
         axios
             .get(getStatePath, {
-                cancelToken: this._fetchSource.token,
+                cancelToken:
+                    this._fetchSource.token,
             })
-            .then((response) => this.stateObserver(response.data))
-            .catch((error) => this._handleError(error));
+            .then((response) =>
+                this.stateObserver(
+                    response.data
+                )
+            )
+            .catch((error) =>
+                this._handleError(error)
+            );
     },
 
     fetchComputationMethods(callback) {
-        let getComputationMethodsPath = API_PATH + "/computation-methods";
+        const getComputationMethodsPath =
+            API_PATH +
+            "/computation-methods";
+
         axios
-            .get(getComputationMethodsPath)
-            .then((apiResponse) => callback(apiResponse.data))
-            .catch((error) => this._handleError(error));
+            .get(
+                getComputationMethodsPath
+            )
+            .then((apiResponse) =>
+                callback(apiResponse.data)
+            )
+            .catch((error) =>
+                this._handleError(error)
+            );
     },
 
-    CANCEL_MESSAGE: "fetchState cancelled by user.",
+    CANCEL_MESSAGE:
+        "fetchState cancelled by user.",
 
     _cancelAllFetches() {
-        this._fetchSource.cancel(this.CANCEL_MESSAGE);
-        this._fetchSource = axios.CancelToken.source();
+        this._fetchSource.cancel(
+            this.CANCEL_MESSAGE
+        );
+
+        this._fetchSource =
+            axios.CancelToken.source();
     },
 
     _errorWasThrownByCancel(error) {
-        return error.toString().includes(this.CANCEL_MESSAGE);
+        return error
+            .toString()
+            .includes(
+                this.CANCEL_MESSAGE
+            );
     },
 };
