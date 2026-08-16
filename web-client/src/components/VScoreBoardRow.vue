@@ -1,15 +1,22 @@
 <template>
-    <div class="score-row" :class="[pieceIndexClass, { 'score-row--is-turn': isTurn }]">
+    <div
+        class="score-row"
+        :class="[pieceIndexClass, { 'score-row--is-turn': isTurn }]"
+    >
         <v-player-piece
             :maxSize="25"
             :player="player"
             :svgSize="30"
             class="score-row__piece-symbol"
         />
+
         <div class="score-row__player-name">
             <player-name-panel :player="player" />
         </div>
-        <p class="score-row__score-data">{{ player.score }}</p>
+
+        <p class="score-row__score-data">
+            {{ player.score }}
+        </p>
     </div>
 </template>
 
@@ -20,23 +27,28 @@ import { getLabel, NO_ACTION } from "@/model/player.js";
 
 export default {
     name: "v-score-board-row",
+
     components: {
         VPlayerPiece,
         PlayerNamePanel,
     },
+
     props: {
         player: {
             required: true,
         },
     },
+
     computed: {
-        pieceIndexClass: function () {
+        pieceIndexClass() {
             return "score-row--player-" + this.player.pieceIndex;
         },
-        playerName: function () {
+
+        playerName() {
             return getLabel(this.player);
         },
-        isTurn: function () {
+
+        isTurn() {
             return this.player.nextAction !== NO_ACTION;
         },
     },
@@ -47,15 +59,17 @@ export default {
 .score-row {
     height: var(--score-row-height);
     width: $game-widget-width;
+
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
-    justify-content: flex-end;
+
     border: 2px solid transparent;
 
     &--is-turn {
         border: 2px solid $interaction-color;
         @include drop-shadow;
+
         transform: scale(1.05);
         z-index: 10;
     }
@@ -76,37 +90,113 @@ export default {
         background: $color-player-3-secondary;
     }
 
-    &__player-piece {
-        width: 3rem;
-        display: flex;
-        align-items: center;
-    }
-
+    /* Numbered player circle */
     &__piece-symbol {
         width: 3rem;
         height: 2rem;
+        flex: 0 0 3rem;
     }
 
+    /* Main player-name area */
     &__player-name {
         --text-height: calc(var(--score-row-height) - 0.2rem);
+
+        position: relative;
+
         width: 8rem;
-        line-height: calc(var(--text-height) / 3);
         height: var(--text-height);
+
+        flex: 0 0 8rem;
+
         overflow: hidden;
+
         border-right: 1px solid $color-ui-border;
 
-        & p {
-            overflow: hidden;
-            height: var(--text-height);
-            vertical-align: middle;
-            display: table-cell;
-        }
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
+    /*
+     * PlayerNamePanel contains:
+     *
+     * avatar
+     * name
+     *
+     * We make the panel fill the whole name area.
+     */
+    &__player-name .player-name-panel {
+        position: relative;
+
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: 0;
+    }
+
+    /*
+     * Keep the profile picture on the LEFT
+     * without allowing it to push the name
+     * away from center.
+     */
+    &__player-name .player-name-panel__avatar {
+        position: absolute;
+
+        left: 0.35rem;
+        top: 50%;
+
+        transform: translateY(-50%);
+
+        width: 34px;
+        height: 34px;
+
+        border-radius: 50%;
+        object-fit: cover;
+
+        z-index: 2;
+    }
+
+    /*
+     * Center normal player-name text.
+     */
+    &__player-name .player-name-panel > p {
+        width: 100%;
+        height: var(--text-height);
+
+        margin: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        text-align: center;
+
+        overflow: hidden;
+
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    /*
+     * Center the editable Wix user's name too.
+     */
+    &__player-name .player-name-panel > *:not(.player-name-panel__avatar) {
+        box-sizing: border-box;
+    }
+
+    /* Score on right */
     &__score-data {
-        text-align: right;
-        padding-right: 0.5rem;
         width: 2rem;
+        flex: 0 0 2rem;
+
+        margin: 0;
+        padding-right: 0.5rem;
+
+        text-align: right;
     }
 }
 </style>
