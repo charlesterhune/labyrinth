@@ -26,7 +26,7 @@
 <script>
 import VPlayerPiece from "@/components/VPlayerPiece.vue";
 import PlayerNamePanel from "@/components/PlayerNamePanel.vue";
-import { getLabel, NO_ACTION } from "@/model/player.js";
+import { NO_ACTION } from "@/model/player.js";
 
 export default {
     name: "v-score-board-row",
@@ -44,21 +44,11 @@ export default {
 
     computed: {
         pieceIndexClass() {
-            return (
-                "score-row--player-" +
-                this.player.pieceIndex
-            );
-        },
-
-        playerName() {
-            return getLabel(this.player);
+            return "score-row--player-" + this.player.pieceIndex;
         },
 
         isTurn() {
-            return (
-                this.player.nextAction !==
-                NO_ACTION
-            );
+            return this.player.nextAction !== NO_ACTION;
         },
     },
 };
@@ -102,33 +92,22 @@ export default {
     &__piece-symbol {
         width: 3rem;
         height: 2rem;
-
         flex: 0 0 3rem;
     }
 
     &__player-name {
-        --text-height:
-            calc(
-                var(--score-row-height) - 0.2rem
-            );
+        --text-height: calc(var(--score-row-height) - 0.2rem);
 
-        width: 9rem;
+        width: 8rem;
         height: var(--text-height);
 
-        flex: 0 0 9rem;
-
-        padding-left: 0.25rem;
-        padding-right: 0.25rem;
-
-        box-sizing: border-box;
-
-        display: flex;
-        align-items: center;
+        flex: 0 0 8rem;
 
         overflow: hidden;
 
-        border-right:
-            1px solid $color-ui-border;
+        border-right: 1px solid $color-ui-border;
+
+        box-sizing: border-box;
     }
 
     &__score-data {
@@ -136,7 +115,6 @@ export default {
         flex: 0 0 2rem;
 
         margin: 0;
-
         padding-right: 0.5rem;
 
         text-align: right;

@@ -1,21 +1,27 @@
 <template>
     <div class="player-name-panel">
-        <img
-            v-if="isUserPlayer && profilePic"
-            :src="profilePic"
-            class="player-name-panel__avatar"
-            alt=""
-        />
+        <div class="player-name-panel__avatar-slot">
+            <img
+                v-if="isUserPlayer && profilePic"
+                :src="profilePic"
+                class="player-name-panel__avatar"
+                alt=""
+            />
+        </div>
 
-        <v-editable-field
-            v-if="isEditable"
-            v-model="playerName"
-            :placeholder="editablePlaceholder"
-        />
+        <div class="player-name-panel__name">
+            <v-editable-field
+                v-if="isEditable"
+                v-model="playerName"
+                :placeholder="editablePlaceholder"
+            />
 
-        <p v-else>
-            {{ playerLabel }}
-        </p>
+            <p v-else>
+                {{ playerLabel }}
+            </p>
+        </div>
+
+        <div class="player-name-panel__spacer"></div>
     </div>
 </template>
 
@@ -81,12 +87,9 @@ export default {
 
             if (
                 !data ||
-                data.type !== "SET_PLAYER_INFO"
+                data.type !== "SET_PLAYER_INFO" ||
+                !this.player.isUser
             ) {
-                return;
-            }
-
-            if (!this.player.isUser) {
                 return;
             }
 
@@ -95,9 +98,7 @@ export default {
                     String(data.playerName).trim();
 
                 if (cleanName) {
-                    this.changeUserPlayerName(
-                        cleanName
-                    );
+                    this.changeUserPlayerName(cleanName);
                 }
             }
 
@@ -105,12 +106,6 @@ export default {
                 this.profilePic =
                     String(data.profilePic);
             }
-
-            console.log(
-                "Wix player info received:",
-                data.playerName,
-                data.profilePic
-            );
         },
     },
 
@@ -135,42 +130,64 @@ export default {
     width: 100%;
     height: 100%;
 
-    display: flex;
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr) 30px;
     align-items: center;
 
-    gap: 6px;
+    box-sizing: border-box;
+}
 
-    overflow: hidden;
+.player-name-panel__avatar-slot {
+    width: 30px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .player-name-panel__avatar {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
 
     border-radius: 50%;
     object-fit: cover;
 
-    flex-shrink: 0;
-
     border: 2px solid #9149D6;
+
+    box-sizing: border-box;
 }
 
-.player-name-panel p {
+.player-name-panel__name {
+    min-width: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+    overflow: hidden;
+}
+
+.player-name-panel__name p {
+    width: 100%;
+
     margin: 0;
 
-    font-size: 14px;
+    font-size: 12px;
     line-height: 1;
+
+    text-align: center;
 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.player-name-panel input {
-    font-size: 14px;
-    line-height: 1;
+.player-name-panel__name > * {
+    max-width: 100%;
+}
 
-    min-width: 0;
-    width: 100%;
+.player-name-panel__spacer {
+    width: 30px;
 }
 </style>
