@@ -1,7 +1,10 @@
 <template>
     <div
         class="score-row"
-        :class="[pieceIndexClass, { 'score-row--is-turn': isTurn }]"
+        :class="[
+            pieceIndexClass,
+            { 'score-row--is-turn': isTurn }
+        ]"
     >
         <v-player-piece
             :maxSize="25"
@@ -41,7 +44,10 @@ export default {
 
     computed: {
         pieceIndexClass() {
-            return "score-row--player-" + this.player.pieceIndex;
+            return (
+                "score-row--player-" +
+                this.player.pieceIndex
+            );
         },
 
         playerName() {
@@ -49,7 +55,10 @@ export default {
         },
 
         isTurn() {
-            return this.player.nextAction !== NO_ACTION;
+            return (
+                this.player.nextAction !==
+                NO_ACTION
+            );
         },
     },
 };
@@ -90,110 +99,44 @@ export default {
         background: $color-player-3-secondary;
     }
 
-    /* Numbered player circle */
     &__piece-symbol {
         width: 3rem;
         height: 2rem;
+
         flex: 0 0 3rem;
     }
 
-    /* Main player-name area */
     &__player-name {
-        --text-height: calc(var(--score-row-height) - 0.2rem);
+        --text-height:
+            calc(
+                var(--score-row-height) - 0.2rem
+            );
 
-        position: relative;
-
-        width: 8rem;
+        width: 9rem;
         height: var(--text-height);
 
-        flex: 0 0 8rem;
+        flex: 0 0 9rem;
 
-        overflow: hidden;
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
 
-        border-right: 1px solid $color-ui-border;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /*
-     * PlayerNamePanel contains:
-     *
-     * avatar
-     * name
-     *
-     * We make the panel fill the whole name area.
-     */
-    &__player-name .player-name-panel {
-        position: relative;
-
-        width: 100%;
-        height: 100%;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        gap: 0;
-    }
-
-    /*
-     * Keep the profile picture on the LEFT
-     * without allowing it to push the name
-     * away from center.
-     */
-    &__player-name .player-name-panel__avatar {
-        position: absolute;
-
-        left: 0.35rem;
-        top: 50%;
-
-        transform: translateY(-50%);
-
-        width: 34px;
-        height: 34px;
-
-        border-radius: 50%;
-        object-fit: cover;
-
-        z-index: 2;
-    }
-
-    /*
-     * Center normal player-name text.
-     */
-    &__player-name .player-name-panel > p {
-        width: 100%;
-        height: var(--text-height);
-
-        margin: 0;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        text-align: center;
-
-        overflow: hidden;
-
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-
-    /*
-     * Center the editable Wix user's name too.
-     */
-    &__player-name .player-name-panel > *:not(.player-name-panel__avatar) {
         box-sizing: border-box;
+
+        display: flex;
+        align-items: center;
+
+        overflow: hidden;
+
+        border-right:
+            1px solid $color-ui-border;
     }
 
-    /* Score on right */
     &__score-data {
         width: 2rem;
         flex: 0 0 2rem;
 
         margin: 0;
+
         padding-right: 0.5rem;
 
         text-align: right;

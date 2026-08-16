@@ -1,6 +1,5 @@
 <template>
     <div class="player-name-panel">
-
         <img
             v-if="isUserPlayer && profilePic"
             :src="profilePic"
@@ -17,7 +16,6 @@
         <p v-else>
             {{ playerLabel }}
         </p>
-
     </div>
 </template>
 
@@ -134,17 +132,45 @@ export default {
 
 <style scoped>
 .player-name-panel {
+    width: 100%;
+    height: 100%;
+
     display: flex;
     align-items: center;
-    gap: 8px;
+
+    gap: 6px;
+
+    overflow: hidden;
 }
 
 .player-name-panel__avatar {
-    width: 34px;
-    height: 34px;
+    width: 30px;
+    height: 30px;
+
     border-radius: 50%;
     object-fit: cover;
+
     flex-shrink: 0;
+
     border: 2px solid #9149D6;
+}
+
+.player-name-panel p {
+    margin: 0;
+
+    font-size: 14px;
+    line-height: 1;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-name-panel input {
+    font-size: 14px;
+    line-height: 1;
+
+    min-width: 0;
+    width: 100%;
 }
 </style>
