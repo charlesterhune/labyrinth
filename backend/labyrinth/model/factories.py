@@ -1,4 +1,4 @@
-(size=7)(size=7)""" This module contains methods to build and initialize games, boards and mazes.
+""" This module contains methods to build and initialize games, boards and mazes.
 
 There are two ways of creating these objects: either by fully specifying all details, or
 by randomly generating layouts based with certain restrictions, based on the original game. """
