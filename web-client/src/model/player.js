@@ -20,7 +20,7 @@ export function computationMethodLabel(computationMethod) {
     if (computationMethod === "libexhsearch") {
         return "Exhaustive Search (1P)";
     } else if (computationMethod === "libminimax") {
-        return "Minimax (2P)";
+    return "Neon Byte (2P) +8-4+1+10+6-6+11-7";
     } else if (computationMethod.startsWith("libminimax-")) {
         let suffix = computationMethod.replace("libminimax-", "");
         if (suffix === "distance") {
