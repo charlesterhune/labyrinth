@@ -42,7 +42,6 @@ export default {
     data() {
         return {
             editablePlaceholder: "Player",
-            profilePic: "",
         };
     },
 
@@ -59,6 +58,10 @@ export default {
 
         isUserPlayer() {
             return this.player.isUser;
+        },
+
+        profilePic() {
+            return this.player.profilePic || "";
         },
 
         playerLabel() {
@@ -79,7 +82,10 @@ export default {
     methods: {
         ...mapActions(
             usePlayersStore,
-            ["changeUserPlayerName"]
+            [
+                "changeUserPlayerName",
+                "setUserProfilePic",
+            ]
         ),
 
         receiveWixPlayerInfo(event) {
@@ -87,24 +93,35 @@ export default {
 
             if (
                 !data ||
-                data.type !== "SET_PLAYER_INFO" ||
-                !this.player.isUser
+                data.type !== "SET_PLAYER_INFO"
             ) {
                 return;
             }
 
             if (data.playerName) {
                 const cleanName =
-                    String(data.playerName).trim();
+                    String(
+                        data.playerName
+                    ).trim();
 
                 if (cleanName) {
-                    this.changeUserPlayerName(cleanName);
+                    this.changeUserPlayerName(
+                        cleanName
+                    );
                 }
             }
 
             if (data.profilePic) {
-                this.profilePic =
-                    String(data.profilePic);
+                const cleanPic =
+                    String(
+                        data.profilePic
+                    ).trim();
+
+                if (cleanPic) {
+                    this.setUserProfilePic(
+                        cleanPic
+                    );
+                }
             }
         },
     },
@@ -131,7 +148,9 @@ export default {
     height: 100%;
 
     display: grid;
-    grid-template-columns: 30px minmax(0, 1fr) 30px;
+    grid-template-columns:
+        30px minmax(0, 1fr) 30px;
+
     align-items: center;
 
     box-sizing: border-box;
