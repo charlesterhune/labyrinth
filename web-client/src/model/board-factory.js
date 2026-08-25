@@ -159,3 +159,93 @@ function shuffle(array) {
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
+
+// Treasure Kracken Level 7:
+// Exact 13x13 board shown after the player leaves the online game.
+export function generateLevel7PuzzleBoard() {
+    const layout = [
+        ["ES","NS","ESW","NW","ESW","EW","ESW","SW","ESW","NS","ESW","NS","SW"],
+        ["NES","NW","SW","ES","NW","NW","NW","NE","NSW","NEW","ES","SW","NS"],
+        ["NES","EW","NES","ESW","ESW","NS","ESW","NE","ESW","NE","ESW","EW","NSW"],
+        ["ES","NS","SW","EW","EW","NSW","EW","NW","NW","EW","EW","NSW","NE"],
+        ["NES","NS","NES","EW","NES","NW","ESW","SW","ESW","ES","NSW","NE","NSW"],
+        ["SW","NE","NS","NW","NS","SW","ES","NS","NS","EW","NES","NSW","ES"],
+        ["NES","EW","NES","NS","NES","NS","NESW","NS","NSW","SW","NSW","EW","NSW"],
+        ["ES","NS","NE","ESW","ESW","NW","SW","ESW","NS","EW","NW","SW","NS"],
+        ["NES","NW","NES","NW","NEW","EW","NEW","NS","NSW","ESW","NSW","EW","NSW"],
+        ["NE","ES","ES","ESW","NW","NS","ESW","NS","NE","NW","NW","NEW","NS"],
+        ["NES","ES","NEW","ES","NEW","NSW","NEW","EW","NEW","NS","NSW","NSW","NSW"],
+        ["NEW","NS","EW","NW","NW","ES","EW","ESW","NEW","SW","EW","NW","NS"],
+        ["NE","EW","NEW","NEW","NEW","ES","NEW","NE","NEW","NS","NEW","NW","NW"],
+    ];
+
+    function cardFromSides(sides) {
+        if (sides === "NESW") {
+            return generateFixedMazeCard(CROSS, 0);
+        }
+
+        if (sides === "NS") {
+            return generateFixedMazeCard(STRAIGHT, 0);
+        }
+
+        if (sides === "EW") {
+            return generateFixedMazeCard(STRAIGHT, 90);
+        }
+
+        const cornerRotations = {
+            NE: 0,
+            ES: 90,
+            SW: 180,
+            NW: 270,
+        };
+
+        if (cornerRotations[sides] !== undefined) {
+            return generateFixedMazeCard(
+                CORNER,
+                cornerRotations[sides]
+            );
+        }
+
+        const tRotations = {
+            NES: 0,
+            ESW: 90,
+            NSW: 180,
+            NEW: 270,
+        };
+
+        if (tRotations[sides] !== undefined) {
+            return generateFixedMazeCard(
+                TJUNCT,
+                tRotations[sides]
+            );
+        }
+
+        throw new Error(
+            "Unknown Level 7 maze card: " + sides
+        );
+    }
+
+    let mazeCards = layout.map((row) =>
+        row.map(cardFromSides)
+    );
+
+    setCardLocations(mazeCards);
+
+    // The leftover tile is not visible inside the 13x13 board.
+    const leftover = generateFreeMazeCard(CORNER);
+    leftover.rotation = 0;
+    leftover.location = null;
+
+    mazeCards = [].concat.apply(
+        [leftover],
+        mazeCards
+    );
+
+    setCardIds(mazeCards);
+
+    return {
+        mazeSize: 13,
+        mazeCards: mazeCards,
+    };
+}
+

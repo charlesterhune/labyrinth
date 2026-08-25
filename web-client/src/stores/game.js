@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 
-import generateBoard from "@/model/board-factory.js";
+import generateBoard, {
+    generateLevel7PuzzleBoard,
+} from "@/model/board-factory.js";
 import API from "@/services/game-api.js";
 import { getShiftLocations, useBoardStore } from "@/stores/board.js";
 import { useCountdownStore } from "@/stores/countdown.js";
@@ -17,6 +19,10 @@ export const stateFactory = () => ({
     mode: OFFLINE,
     serverComputationMethods: [],
     turnProgressionTimeout: 0,
+
+    // Level 7 reveal state.
+    // True only after leaving an online 13x13 game.
+    showLevel7PuzzleBoard: false,
 });
 
 export const useGameStore = defineStore("game", {
@@ -50,6 +56,29 @@ export const useGameStore = defineStore("game", {
         },
     },
     actions: {
+        showFixedLevel7Board() {
+            const boardStore =
+                useBoardStore();
+
+            this.showLevel7PuzzleBoard =
+                true;
+
+            const board =
+                generateLevel7PuzzleBoard();
+
+            boardStore.update({
+                maze: board,
+                enabledShiftLocations:
+                    getShiftLocations(13),
+                players: [],
+            });
+        },
+
+        hideFixedLevel7Board() {
+            this.showLevel7PuzzleBoard =
+                false;
+        },
+
         leaveOnlineGame() {
             if (this.isOnline) {
                 const playersStore = usePlayersStore();
@@ -99,11 +128,26 @@ export const useGameStore = defineStore("game", {
             this.updateObjective(newState.objectiveMazeCardId);
             this.updateNextAction(newState.nextAction);
             playersStore.update(newState.players);
+            const showPuzzleBoard =
+                this.showLevel7PuzzleBoard &&
+                newState.maze.mazeSize === 13;
+
             const boardState = {
-                maze: newState.maze,
-                enabledShiftLocations: newState.enabledShiftLocations,
-                players: newState.players,
+                maze: showPuzzleBoard
+                    ? generateLevel7PuzzleBoard()
+                    : newState.maze,
+
+                enabledShiftLocations:
+                    showPuzzleBoard
+                        ? getShiftLocations(13)
+                        : newState.enabledShiftLocations,
+
+                // Do not draw server pieces over the reveal board.
+                players: showPuzzleBoard
+                    ? []
+                    : newState.players,
             };
+
             boardStore.update(boardState);
         },
         move(moveAction) {

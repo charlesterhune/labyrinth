@@ -134,6 +134,10 @@ export const usePlayersStore = defineStore("players", {
 
             const gameStore = useGameStore();
 
+            // If the fixed Level 7 reveal board is showing,
+            // entering the game returns us to the live server board.
+            gameStore.hideFixedLevel7Board();
+
             if (gameStore.isOnline) {
                 API.doAddPlayer(
                     this.userPlayerName,
@@ -199,9 +203,23 @@ export const usePlayersStore = defineStore("players", {
 
         leaveGame() {
             if (this.hasUserPlayer) {
+                const boardStore =
+                    useBoardStore();
+
+                const gameStore =
+                    useGameStore();
+
+                const leavingHugeOnlineGame =
+                    gameStore.isOnline &&
+                    boardStore.mazeSize === 13;
+
                 this.removeClientPlayer(
                     this.userPlayerId
                 );
+
+                if (leavingHugeOnlineGame) {
+                    gameStore.showFixedLevel7Board();
+                }
             }
         },
 
